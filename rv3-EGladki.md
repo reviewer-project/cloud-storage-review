@@ -4,7 +4,7 @@
 
 ## 1. Безопасность
 
-### 1.1. Ограничение длины пароля снижает безопасность (MEDIUM)
+### 1.1. Ограничение длины пароля снижает безопасность
 ```java
 // AuthRequestDto.java
 @Size(min = 5, max = 20, message = "Password must be between 5 and 20 length")
@@ -14,7 +14,7 @@ private String password;
 
 **Рекомендация:** Убрать или увеличить верхний лимит до 72-128 символов.
 
-### 1.2. Утечка внутренних сообщений об ошибках (MEDIUM)
+### 1.2. Утечка внутренних сообщений об ошибках
 ```java
 // GlobalExceptionHandler.java
 @ExceptionHandler(Exception.class)
@@ -27,7 +27,7 @@ public Map<String, String> handleCommonException(Exception ex) {
 
 **Рекомендация:** Возвращать generic сообщение типа "Internal server error" для непредвиденных исключений, а детали логировать.
 
-### 1.3. Username регистр-зависимый (LOW)
+### 1.3. Username регистр-зависимый
 ```java
 // UserRepository.java
 Optional<User> findByUsername(String userName);
@@ -43,7 +43,7 @@ Optional<User> findByUsernameIgnoreCase(String userName);
 
 ## 2. Логические ошибки
 
-### 2.1. Move использует GET вместо POST/PATCH (HIGH)
+### 2.1. Move использует GET вместо POST/PATCH
 ```java
 // FileManagerController.java
 @GetMapping("/resource/move")
@@ -51,7 +51,7 @@ public ResponseEntity<?> move(@RequestParam(defaultValue = "") String from, Stri
 ```
 Операция move изменяет состояние на сервере, но использует HTTP GET. Это нарушение REST-семантики, хоть в ТЗ и сказано использовать ГЕТ, но должны были бы возникнуть вопросы, правильно ли это?
 
-### 2.2. 404 вместо пустого списка при поиске (MEDIUM)
+### 2.2. 404 вместо пустого списка при поиске
 ```java
 // FileStorageMinioService.java
 public List<Resource> search(String path, UserResponseDto userResponseDto) {
@@ -66,7 +66,7 @@ public List<Resource> search(String path, UserResponseDto userResponseDto) {
 
 **Рекомендация:** Убрать выброс исключения и возвращать пустой список.
 
-### 2.3. Файлы полностью загружаются в память при скачивании (MEDIUM)
+### 2.3. Файлы полностью загружаются в память при скачивании
 ```java
 // FileStorageMinioService.java
 public byte[] downloadFile(String path, UserResponseDto userResponseDto) {
@@ -92,7 +92,7 @@ public ResponseEntity<StreamingResponseBody> download(@RequestParam String path)
 }
 ```
 
-### 2.4. Move копирует файл в память перед перезаписью (MEDIUM)
+### 2.4. Move копирует файл в память перед перезаписью
 ```java
 // FileStorageMinioService.java
 private List<Resource> moveFile(String from, String to, UserResponseDto userResponseDto) {
@@ -108,7 +108,7 @@ private List<Resource> moveFile(String from, String to, UserResponseDto userResp
 
 **Рекомендация:** Использовать `minioClient.copyObject()` для серверного копирования без загрузки в приложение.
 
-### 2.5. Рекурсивное удаление не использует batch операцию (LOW)
+### 2.5. Рекурсивное удаление не использует batch операцию
 ```java
 // FileStorageMinioService.java
 public void deleteDirectory(String path, UserResponseDto userResponseDto) {
@@ -123,7 +123,7 @@ public void deleteDirectory(String path, UserResponseDto userResponseDto) {
 
 **Рекомендация:** Использовать `minioClient.removeObjects()` для batch-удаления.
 
-### 2.6. Параметр `to` в move не объявлен как @RequestParam (LOW)
+### 2.6. Параметр `to` в move не объявлен как @RequestParam
 ```java
 // FileManagerController.java
 @GetMapping("/resource/move")
@@ -133,7 +133,7 @@ public ResponseEntity<?> move(@RequestParam(defaultValue = "") String from, Stri
 
 ## 3. Архитектура
 
-### 3.1. Дублирование бинов AuthenticationProvider (LOW)
+### 3.1. Дублирование бинов AuthenticationProvider
 ```java
 // SecurityConfig.java
 @Bean
@@ -152,7 +152,7 @@ public DaoAuthenticationProvider daoAuthenticationProvider() {
 ```
 Два идентичных бина `DaoAuthenticationProvider`. Достаточно одного.
 
-### 3.2. Использование ResponseEntity<?> вместо конкретных типов (LOW)
+### 3.2. Использование ResponseEntity<?> вместо конкретных типов
 ```java
 // FileManagerController.java
 public ResponseEntity<?> createDirectory(@RequestParam String path)
@@ -166,7 +166,7 @@ public ResponseEntity<Directory> createDirectory(...)
 public ResponseEntity<List<Resource>> getContent(...)
 ```
 
-### 3.3. Сервис возвращает ResponseEntity (LOW)
+### 3.3. Сервис возвращает ResponseEntity
 ```java
 // AuthService.java
 public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -191,7 +191,7 @@ public void logout(...) {
 
 ## 4. Ограничения
 
-### 4.1. Нет валидации длины пути (MEDIUM)
+### 4.1. Нет валидации длины пути
 ```java
 // FileStorageMinioService.java
 private void validateCreationDirectoryPath(String path) {
@@ -211,7 +211,7 @@ if (path.length() > MAX_PATH_LENGTH) {
 }
 ```
 
-### 4.2. Username разрешает только буквы (LOW)
+### 4.2. Username разрешает только буквы
 ```java
 // AuthRequestDto.java
 @Pattern(regexp = "^[a-zA-Zа-яА-ЯёЁ\\s]+$", message = "Only letters allowed")
@@ -219,7 +219,7 @@ private String username;
 ```
 Нельзя использовать цифры и спецсимволы в username. Пробелы разрешены, что может быть проблемой.
 
-### 4.3. Нет лимита на количество загружаемых файлов (LOW)
+### 4.3. Нет лимита на количество загружаемых файлов
 ```java
 // FileManagerController.java
 public ResponseEntity<?> upload(@RequestParam(defaultValue = "") String path,
@@ -229,7 +229,7 @@ public ResponseEntity<?> upload(@RequestParam(defaultValue = "") String path,
 
 ## 5. Обработка ошибок
 
-### 5.1. Глотание оригинальных исключений (MEDIUM)
+### 5.1. Глотание оригинальных исключений
 ```java
 // FileStorageMinioService.java
 } catch (Exception e) {
@@ -246,7 +246,7 @@ public ResponseEntity<?> upload(@RequestParam(defaultValue = "") String path,
 }
 ```
 
-### 5.2. Ловятся все Exception вместо конкретных типов (LOW)
+### 5.2. Ловятся все Exception вместо конкретных типов
 ```java
 } catch (Exception e) {
     throw new InternalFileStorageException();
