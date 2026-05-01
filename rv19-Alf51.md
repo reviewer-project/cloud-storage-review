@@ -6,13 +6,11 @@
 
 2. **Интерфейсы для сервисов.** `CloudStorageService`, `FileMetaDataService`, `FileStorageFacade` вынесены в `/storage/api`. Реализации спрятаны в `/storage/impl` — контракт отделён от реализации.
 
-3. **`@ConfigurationProperties` для MinIO.** `MinioProperties` — единый источник конфигурации хранилища. Правильный подход, который последовательно не применён для Redis и CORS (см. замечания).
+3. **JDBC для рекурсивных CTE-запросов.** `WITH RECURSIVE` через JPQL недоступен — использование `NamedParameterJdbcTemplate` в `StoragePathRepositoryImpl` архитектурно оправдано.
 
-4. **JDBC для рекурсивных CTE-запросов.** `WITH RECURSIVE` через JPQL недоступен — использование `NamedParameterJdbcTemplate` в `StoragePathRepositoryImpl` архитектурно оправдано.
+4. **Интеграционные тесты с Testcontainers.** `BaseConfigIntegrationTest` поднимает реальные PostgreSQL, Minio, Redis. Конфигурация переиспользуется через базовый класс — хороший фундамент.
 
-5. **Интеграционные тесты с Testcontainers.** `BaseConfigIntegrationTest` поднимает реальные PostgreSQL, Minio, Redis. Конфигурация переиспользуется через базовый класс — хороший фундамент.
-
-6. **`StreamingResponseBody` для скачивания.** Файл передаётся напрямую из Minio в ответ без буферизации в памяти — единственно верный подход для файлового хранилища.
+5. **`StreamingResponseBody` для скачивания.** Файл передаётся напрямую из Minio в ответ без буферизации в памяти — единственно верный подход для файлового хранилища.
 
 ---
 
