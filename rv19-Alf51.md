@@ -1,5 +1,7 @@
 [Alf51/cloud-storage](https://gitlab.com/Alf51/cloud-storage)
 
+[Ревью сделано в рамках учебной подписки](https://zhukovsd.it/services/student-subscription/)
+
 ## ХОРОШО
 
 1. **Facade Pattern.** `FileStorageFacade` — единственная точка входа в storage-домен. Контроллер не знает ни о Minio, ни о метаданных — только о фасаде.
