@@ -188,24 +188,6 @@ public PathResponse getResource(@RequestParam String path,
 }
 ```
 
-7. В `MainController#uploadResource()` параметр `@RequestPart("object")` жёстко задаёт имя multipart-части. 
-
-Фронтенд из ТЗ и типичные HTML file input отправляют файлы с part name `file`. Несовпадение имени part ломает интеграцию с React frontend: upload silently fails с 400, хотя тело запроса формально содержит файлы.
-
-**Рекомендация:**
-
-Принимай список файлов через `@RequestParam("file")`, как ожидает multipart upload из browser file input.
-
-```java
-@PostMapping("/resource")
-@ResponseStatus(HttpStatus.CREATED)
-public List<PathResponse> uploadResource(@RequestParam String path,
-                                         @AuthenticationPrincipal AuthenticatedUser user,
-                                         @RequestParam("file") List<MultipartFile> files) throws IOException {
-    return fileService.uploadResource(path, user.id(), files);
-}
-```
-
 8. В `MainController` стоит `@Slf4j`, но constructor injection реализован вручную: объявлены `private final` поля и явный конструктор с присваиванием. Для Spring-бинов в проекте `@RequiredArgsConstructor` нигде не применяется — в `FileService` и `UserService` та же схема. Lombok подключён, но приносит только логгер, а основной boilerplate DI ты переписываешь сам.
 
 **Рекомендация:**
