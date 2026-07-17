@@ -1,4 +1,4 @@
-(ChestnutLord/cloud-file-storage)[https://github.com/ChestnutLord/cloud-file-storage]
+[ChestnutLord/cloud-file-storage](https://github.com/ChestnutLord/cloud-file-storage)
 
 ## ХОРОШО
 
